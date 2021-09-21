@@ -37,7 +37,13 @@ async def start(bot, update):
                                 (
                                     '⚠️ 𝙅𝙊𝙄𝙉', url="https://t.me/MOVIESWORLD52"
                                 )
-                        ]
+                        ],
+                        [
+                            InlineKeyboardButton
+                                (
+                                    '⚠️ 𝙅𝙊𝙄𝙉', url="https://t.me/MOVIESWORLD52"
+                                )
+                        ] 
                     ]
                 )
             )
