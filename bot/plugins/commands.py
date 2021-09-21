@@ -41,7 +41,7 @@ async def start(bot, update):
                         [
                             InlineKeyboardButton
                                 (
-                                    '⚠️ 𝙅𝙊𝙄𝙉', url="https://t.me/MOVIESWORLD52"
+                                    '⚠️ 𝙅𝙊𝙄𝙉', url="https://t.me/MOVIESWORLD54"
                                 )
                         ] 
                     ]
@@ -53,7 +53,7 @@ async def start(bot, update):
         return
 
     buttons = [[
-        InlineKeyboardButton('🕵️‍♂️ 𝘾𝙍𝙀𝘼𝙏𝙊𝙍', url='https://t.me/CrazyBotsz'),
+        InlineKeyboardButton('🕵️‍♂️ 𝘾𝙍𝙀𝘼𝙏𝙊𝙍', url='https://t.me/darkz_angel'),
         InlineKeyboardButton('𝙂𝙍𝙊𝙐𝙋', url ='https://t.me/MOVIESWORLD52')
     ],[
         InlineKeyboardButton('𝘾𝙃𝘼𝙉𝙉𝙀𝙇', url='https://t.me/MOVIESWORLD54')
@@ -77,10 +77,10 @@ async def start(bot, update):
 @Client.on_message(filters.command(["help"]) & filters.private, group=1)
 async def help(bot, update):
     buttons = [[
-        InlineKeyboardButton('Home ⚡', callback_data='start'),
-        InlineKeyboardButton('About 🚩', callback_data='about')
+        InlineKeyboardButton('𝙃𝙊𝙈𝙀 ⚡', callback_data='start'),
+        InlineKeyboardButton('𝘼𝘽𝙊𝙐𝙏 🚩', callback_data='about')
     ],[
-        InlineKeyboardButton('Close 🔐', callback_data='close')
+        InlineKeyboardButton('𝘾𝙇𝙊𝙎𝙀 🔐', callback_data='close')
     ]]
     
     reply_markup = InlineKeyboardMarkup(buttons)
@@ -98,8 +98,8 @@ async def help(bot, update):
 async def about(bot, update):
     
     buttons = [[
-        InlineKeyboardButton('Home ⚡', callback_data='start'),
-        InlineKeyboardButton('Close 🔐', callback_data='close')
+        InlineKeyboardButton('𝙃𝙊𝙈𝙀 ⚡', callback_data='start'),
+        InlineKeyboardButton('𝘾𝙇𝙊𝙎𝙀 🔐', callback_data='close')
     ]]
     reply_markup = InlineKeyboardMarkup(buttons)
     
