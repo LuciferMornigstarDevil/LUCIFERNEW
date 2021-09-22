@@ -35,13 +35,13 @@ async def start(bot, update):
                         [
                             InlineKeyboardButton
                                 (
-                                    '⚠️ 𝙅𝙊𝙄𝙉', url="https://t.me/MOVIESWORLD52"
+                                    '⚠️ 𝙅𝙊𝙄𝙉', url="https://t.me/beast_boys77"
                                 )
                         ],
                         [
                             InlineKeyboardButton
                                 (
-                                    '⚠️ 𝙅𝙊𝙄𝙉', url="https://t.me/MOVIESWORLD54"
+                                    '⚠️ 𝙅𝙊𝙄𝙉', url="https://t.me/storytimeoG"
                                 )
                         ] 
                     ]
