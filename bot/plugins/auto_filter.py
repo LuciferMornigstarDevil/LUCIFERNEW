@@ -155,7 +155,7 @@ async def auto_filter(bot, update):
         
         # Just A Decaration
         result[0].append([
-            InlineKeyboardButton(f"🗒️ Page 1/{len_result if len_result < max_pages else max_pages} 🗒️", callback_data="ignore")
+            InlineKeyboardButton(f"🪙 Page 1/{len_result if len_result < max_pages else max_pages} 🪙", callback_data="ignore")
         ])
         
         
@@ -184,13 +184,13 @@ async def auto_filter(bot, update):
                 if ((len(ibuttons)%2) == 0):
                     ibuttons.append(
                         [
-                            InlineKeyboardButton(f"⚜ {chat_name} ⚜", url=invite_link)
+                            InlineKeyboardButton(f"🦋 {chat_name} 🦋", url=invite_link)
                         ]
                     )
 
                 else:
                     ibuttons[-1].append(
-                        InlineKeyboardButton(f"⚜ {chat_name} ⚜", url=invite_link)
+                        InlineKeyboardButton(f"🦋 {chat_name} 🦋", url=invite_link)
                     )
                 
             for x in ibuttons:
