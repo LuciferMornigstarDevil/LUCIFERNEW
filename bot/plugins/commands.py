@@ -54,9 +54,9 @@ async def start(bot, update):
 
     buttons = [[
         InlineKeyboardButton('🕵️‍♂️ 𝘾𝙍𝙀𝘼𝙏𝙊𝙍', url='https://t.me/darkz_angel'),
-        InlineKeyboardButton('𝙂𝙍𝙊𝙐𝙋', url ='https://t.me/MOVIESWORLD52')
+        InlineKeyboardButton('⚠️ 𝙂𝙍𝙊𝙐𝙋', url ='https://t.me/MOVIESWORLD52')
     ],[
-        InlineKeyboardButton('channel', url='https://t.me/MOVIESWORLD54')
+        InlineKeyboardButton('♻️ 𝘾𝙃𝘼𝙉𝙉𝙀𝙇', url='https://t.me/MOVIESWORLD54')
         InlineKeyboardButton('💡 𝙃𝙀𝙇𝙋', callback_data="help")
     ]]
     
