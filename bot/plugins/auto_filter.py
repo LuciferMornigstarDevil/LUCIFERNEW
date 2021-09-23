@@ -204,13 +204,14 @@ async def auto_filter(bot, update):
 
         try:
             await bot.send_photo(
-                chat_id = update.chat.id,
-                photo= MASSAGE_PHOTO,
-                caption=f"<b>🗂️Total File :- {(len_results)} </b>\n<b>❤️‍🔥Movie :- {(len_results)} </b>\n<b>♻️𝐑𝐞𝐪𝐮𝐞𝐬𝐭𝐞𝐝 𝐌𝐨𝐯𝐢𝐞♻️ :-</b> <code>{query}</code>", :-</b> <code>{query}</code>",
-                reply_markup=reply_markup,
-                parse_mode="html",
-                reply_to_message_id=update.message_id
-            )
+        chat_id=update.chat.id,
+        photo="https://telegra.ph/file/00f3ec42ec504538e8562.jpg",
+        caption=Translation.START_TEXT.format(
+                update.from_user.first_name),
+        reply_markup=reply_markup,
+        parse_mode="html",
+        reply_to_message_id=update.message_id
+    )
 
         except ButtonDataInvalid:
             print(result[0])
