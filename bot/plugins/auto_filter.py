@@ -203,15 +203,13 @@ async def auto_filter(bot, update):
         reply_markup = InlineKeyboardMarkup(result[0])
 
         try:
-            await bot.send_photo(
-        chat_id=update.chat.id,
-        photo="https://telegra.ph/file/00f3ec42ec504538e8562.jpg",
-        caption=Translation.START_TEXT.format(
-                update.from_user.first_name),
-        reply_markup=reply_markup,
-        parse_mode="html",
-        reply_to_message_id=update.message_id
-    )
+            await bot.send_message(
+                chat_id = update.chat.id,
+                text=f"Found {(len_results)} ♻️𝐑𝐞𝐪𝐮𝐞𝐬𝐭𝐞𝐝 𝐌𝐨𝐯𝐢𝐞♻️ :-</b> <code>{query}</code>",
+                reply_markup=reply_markup,
+                parse_mode="html",
+                reply_to_message_id=update.message_id
+            )
 
         except ButtonDataInvalid:
             print(result[0])
