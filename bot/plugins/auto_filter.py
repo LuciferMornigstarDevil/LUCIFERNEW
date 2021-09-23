@@ -155,7 +155,7 @@ async def auto_filter(bot, update):
         
         # Just A Decaration
         result[0].append([
-            InlineKeyboardButton(f"🌟 Page 1/{len_result if len_result < max_pages else max_pages} 🌟", callback_data="ignore")
+            InlineKeyboardButton(f"🗒️ Page 1/{len_result if len_result < max_pages else max_pages} 🗒️", callback_data="ignore")
         ])
         
         
@@ -184,13 +184,13 @@ async def auto_filter(bot, update):
                 if ((len(ibuttons)%2) == 0):
                     ibuttons.append(
                         [
-                            InlineKeyboardButton(f"🦋 {chat_name} 🦋", url=invite_link)
+                            InlineKeyboardButton(f"⚜ {chat_name} ⚜", url=invite_link)
                         ]
                     )
 
                 else:
                     ibuttons[-1].append(
-                        InlineKeyboardButton(f" {chat_name} ", url=invite_link)
+                        InlineKeyboardButton(f"⚜ {chat_name} ⚜", url=invite_link)
                     )
                 
             for x in ibuttons:
@@ -203,10 +203,9 @@ async def auto_filter(bot, update):
         reply_markup = InlineKeyboardMarkup(result[0])
 
         try:
-            await bot.send_photo(
+            await bot.send_message(
                 chat_id = update.chat.id,
-                photo= "https://telegra.ph/file/842ec4694de82608b18cb.jpg",
-                caption=f"<b>🦋Total File :- {(len_results)} </b>\n<b>❤️‍🔥𝐆𝐫𝐨𝐮𝐩❤️‍🔥:- @ADMOVEIAD പടം ലഭിക്കുന്നതിനായി താഴെ കാണുന്ന ബട്ടണുകളിൽ ക്ലിക്ക് ചെയ്യുക👇👇 ⭕️𝗣𝗿𝗲𝘀𝘀 𝗧𝗵𝗲 𝗗𝗼𝘄𝗻 𝗕𝘂𝘁𝘁𝗼𝗻𝘀 𝗧𝗼 𝗔𝗰𝗰𝗲𝘀𝘀 𝗧𝗵𝗲 𝗙𝗶𝗹𝗲⭕️ :- {(len_results)} </b>\n<b>♻️𝐑𝐞𝐪𝐮𝐞𝐬𝐭𝐞𝐝 𝐌𝐨𝐯𝐢𝐞♻️ :-</b> <code>{query}</code>",
+                text=f"Found {(len_results)} Results For Your Query: <code>{query}</code>",
                 reply_markup=reply_markup,
                 parse_mode="html",
                 reply_to_message_id=update.message_id
@@ -217,6 +216,7 @@ async def auto_filter(bot, update):
         
         except Exception as e:
             print(e)
+
 
 async def gen_invite_links(db, group_id, bot, update):
     """
