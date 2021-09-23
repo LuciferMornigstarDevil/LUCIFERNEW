@@ -155,7 +155,7 @@ async def auto_filter(bot, update):
         
         # Just A Decaration
         result[0].append([
-            InlineKeyboardButton(f"🪙 Page 1/{len_result if len_result < max_pages else max_pages} 🪙", callback_data="ignore")
+            InlineKeyboardButton(f"🌟 Page 1/{len_result if len_result < max_pages else max_pages} 🌟", callback_data="ignore")
         ])
         
         
@@ -206,7 +206,7 @@ async def auto_filter(bot, update):
             await bot.send_photo(
                 chat_id = update.chat.id,
                 photo= "https://telegra.ph/file/00f3ec42ec504538e8562.jpg",
-                caption=f"<b>🗂️Total File :- {(len_results)} </b>\n<b>🎬Movie Name :-</b> <code>{query}</code>",
+                caption=f"<b>🗂️Total File :- {(len_results)} </b>\n<b>❤️‍🔥𝐆𝐫𝐨𝐮𝐩❤️‍🔥:- @ADMOVEIAD പടം ലഭിക്കുന്നതിനായി താഴെ കാണുന്ന ബട്ടണുകളിൽ ക്ലിക്ക് ചെയ്യുക👇👇⭕️𝗣𝗿𝗲𝘀𝘀 𝗧𝗵𝗲 𝗗𝗼𝘄𝗻 𝗕𝘂𝘁𝘁𝗼𝗻𝘀 𝗧𝗼 𝗔𝗰𝗰𝗲𝘀𝘀 𝗧𝗵𝗲 𝗙𝗶𝗹𝗲⭕️ :- {(len_results)} </b>\n<b>♻️𝐑𝐞𝐪𝐮𝐞𝐬𝐭𝐞𝐝 𝐌𝐨𝐯𝐢𝐞♻️ :-</b> <code>{query}</code>",
                 reply_markup=reply_markup,
                 parse_mode="html",
                 reply_to_message_id=update.message_id
