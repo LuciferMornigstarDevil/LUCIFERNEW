@@ -35,13 +35,13 @@ async def start(bot, update):
                         [
                             InlineKeyboardButton
                                 (
-                                    '👻 𝙅𝙊𝙄𝙉', url="https://t.me/ADMOVEIAD"
+                                    '⚠️ 𝙅𝙊𝙄𝙉', url="https://t.me/beast_boys77"
                                 )
                         ],
                         [
                             InlineKeyboardButton
                                 (
-                                    '👻 𝙅𝙊𝙄𝙉', url="https://t.me/ADMOVEI"
+                                    '⚠️ 𝙅𝙊𝙄𝙉', url="https://t.me/beast_boys007"
                                 )
                         ] 
                     ]
@@ -53,10 +53,10 @@ async def start(bot, update):
         return
 
     buttons = [[
-        InlineKeyboardButton('🕵️‍♂️ 𝘾𝙍𝙀𝘼𝙏𝙊𝙍', url='https://t.me/Lucifer_Devil_AD'),
-        InlineKeyboardButton('⚠️ 𝙂𝙍𝙊𝙐𝙋', url ='https://t.me/ADMOVEIAD')
+        InlineKeyboardButton('🕵️‍♂️ 𝘾𝙍𝙀𝘼𝙏𝙊𝙍', url='https://t.me/darkz_angel'),
+        InlineKeyboardButton('⚠️ 𝙂𝙍𝙊𝙐𝙋', url ='https://t.me/beast_boys77')
     ],[
-        InlineKeyboardButton('♻️ 𝙅𝙊𝙄𝙉 𝙊𝙐𝙍 𝙈𝘼𝙄𝙉 𝘾𝙃𝘼𝙉𝙉𝙀𝙇 ♻️', url='https://t.me/ADMOVEI')
+        InlineKeyboardButton('♻️ 𝙅𝙊𝙄𝙉 𝙊𝙐𝙍 𝙈𝘼𝙄𝙉 𝘾𝙃𝘼𝙉𝙉𝙀𝙇 ♻️', url='https://t.me/beast_boys007')
     ],[
         InlineKeyboardButton('💡 𝙃𝙀𝙇𝙋', callback_data="help"),
         InlineKeyboardButton('🔐 𝘾𝙇𝙊𝙎𝙀', callback_data="close")
@@ -66,7 +66,7 @@ async def start(bot, update):
     
     await bot.send_photo(
         chat_id=update.chat.id,
-        photo="https://telegra.ph/file/c8d504199f35cbef9e7d9.jpg",
+        photo="https://telegra.ph/file/9e94cd6ab65c94a4d54c3.jpg",
         caption=Translation.START_TEXT.format(
                 update.from_user.first_name),
         reply_markup=reply_markup,
