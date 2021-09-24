@@ -1,117 +1,286 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# (c) @AlbertEinsteinTG
-#PEAKYBOTEVA | @MR-JINN-OF-TG
+import re
+import logging
+import asyncio
 
-from pyrogram import filters, Client
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
-from bot import Translation, LOGGER # pylint: disable=import-error
+from pyrogram import Client, filters
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
+from pyrogram.errors import ButtonDataInvalid, FloodWait
+
 from bot.database import Database # pylint: disable=import-error
-import random
+from bot.bot import Bot # pylint: disable=import-error
 
-PHOTOS = [
-    "https://telegra.ph/file/00f3ec42ec504538e8562.jpg",
-    "https://telegra.ph/file/c8d504199f35cbef9e7d9.jpg",
-    "https://telegra.ph/file/6cde654fda604d8766bfc.jpg",
-    "https://telegra.ph/file/842ec4694de82608b18cb.jpg",
-    "https://telegra.ph/file/2ab65224486fff9036d60.jpg",
-    "https://telegra.ph/file/a1e13e0dee2925389d45d.jpg",
-    "https://telegra.ph/file/912e99f6798a3d2b1df23.jpg",
-    "https://telegra.ph/file/4c9b2db0dae674721311a.jpg",
-    "https://telegra.ph/file/c8d504199f35cbef9e7d9.jpg",
-    "https://telegra.ph/file/ce503a23b17d53e630e8f.jpg",
-    "https://telegra.ph/file/715f3323eff6db3be2c6a.jpg",
-    "https://telegra.ph/file/7060eae48294db4fe794c.jpg",
-    "https://telegra.ph/file/260e45cb876f25b1c68ac.jpg",
-    "https://telegra.ph/file/99303a13e5327748f6c9e.jpg",
-    "https://telegra.ph/file/68eda27d26ade468d8b63.jpg",
-    "https://telegra.ph/file/ae952c29c5b6f734cb243.jpg",
-    "https://telegra.ph/file/9eb707d924df4f939f404.jpg",
-    "https://telegra.ph/file/52174d04e4e8fb6a60c3e.jpg",
-]
 
+FIND = {}
+INVITE_LINK = {}
+ACTIVE_CHATS = {}
 db = Database()
 
-@Client.on_message(filters.command(["start"]) & filters.private, group=1)
-async def start(bot, update):
-    
-    try:
-        file_uid = update.command[1]
-    except IndexError:
-        file_uid = False
-    
-    if file_uid:
-        file_id, file_name, file_caption, file_type = await db.get_file(file_uid)
-        
-        if (file_id or file_type) == None:
-            return
-        
-        caption = file_caption if file_caption != ("" or None) else ("<code>" + file_name + "</code>")
-        try:
-            await update.reply_cached_media(
-                file_id,
-                quote=True,
-                caption = caption,
-                parse_mode="html",
-                reply_markup=InlineKeyboardMarkup(
-                    [
-                        [
-                            InlineKeyboardButton
-                                (
-                                    '🎬 𝙅𝙊𝙄𝙉 🎬', url="https://t.me/ADMOVEI"
-                                )
-                        ],
-                        [
-                            InlineKeyboardButton
-                                (
-                                    '🌟 𝙅𝙊𝙄𝙉 🌟', url="https://t.me/ADMOVEIAD"
-                                )
-                        ] 
-                    ]
-                )
-            )
-        except Exception as e:
-            await update.reply_text(f"<b>Error:</b>\n<code>{e}</code>", True, parse_mode="html")
-            LOGGER(__name__).error(e)
+@Bot.on_message(filters.text & filters.group & ~filters.bot, group=0)
+async def auto_filter(bot, update):
+    """
+    A Funtion To Handle Incoming Text And Reply With Appropriate Results
+    """
+    group_id = update.chat.id
+
+    if re.findall(r"((^\/|^,|^\.|^[\U0001F600-\U000E007F]).*)", update.text):
         return
+    
+    if ("https://" or "http://") in update.text:
+        return
+    
+    query = re.sub(r"[1-2]\d{3}", "", update.text) # Targetting Only 1000 - 2999 😁
+    
+    if len(query) < 2:
+        return
+    
+    results = []
+    
+    global ACTIVE_CHATS
+    global FIND
+    
+    configs = await db.find_chat(group_id)
+    achats = ACTIVE_CHATS[str(group_id)] if ACTIVE_CHATS.get(str(group_id)) else await db.find_active(group_id)
+    ACTIVE_CHATS[str(group_id)] = achats
+    
+    if not configs:
+        return
+    
+    allow_video = configs["types"]["video"]
+    allow_audio = configs["types"]["audio"] 
+    allow_document = configs["types"]["document"]
+    
+    max_pages = configs["configs"]["max_pages"] # maximum page result of a query
+    pm_file_chat = configs["configs"]["pm_fchat"] # should file to be send from bot pm to user
+    max_results = configs["configs"]["max_results"] # maximum total result of a query
+    max_per_page = configs["configs"]["max_per_page"] # maximum buttom per page 
+    show_invite = configs["configs"]["show_invite_link"] # should or not show active chat invite link
+    
+    show_invite = (False if pm_file_chat == True else show_invite) # turn show_invite to False if pm_file_chat is True
+    
+    filters = await db.get_filters(group_id, query)
+    
+    if filters:
+        for filter in filters: # iterating through each files
+            file_name = filter.get("file_name")
+            file_type = filter.get("file_type")
+            file_link = filter.get("file_link")
+            file_size = int(filter.get("file_size", "0"))
+            
+            # from B to MiB
+            
+            if file_size < 1024:
+                file_size = f"[{file_size} B]"
+            elif file_size < (1024**2):
+                file_size = f"[{str(round(file_size/1024, 2))} KB] "
+            elif file_size < (1024**3):
+                file_size = f"[{str(round(file_size/(1024**2), 2))} MB] "
+            elif file_size < (1024**4):
+                file_size = f"[{str(round(file_size/(1024**3), 2))} GB] "
+            
+            
+            file_size = "" if file_size == ("[0 B]") else file_size
+            
+            # add emoji down below inside " " if you want..
+            file_names = file_name
+            f_size = file_size
+            
 
-    buttons = [[
-        InlineKeyboardButton('🕵️‍♂️ 𝘾𝙍𝙀𝘼𝙏𝙊𝙍 🕵️‍♂️', url='https://t.me/Lucifer_Devil_AD'),
-        InlineKeyboardButton('⚠️ 𝙂𝙍𝙊𝙐𝙋 ⚠️', url ='https://t.me/ADMOVEIAD')
-    ],[
-        InlineKeyboardButton('♻️ 𝙅𝙊𝙄𝙉 𝙊𝙐𝙍 𝙈𝘼𝙄𝙉 𝘾𝙃𝘼𝙉𝙉𝙀𝙇 ♻️', url='https://t.me/ADMOVEI')
-    ],[
-        InlineKeyboardButton('💡 𝙃𝙀𝙇𝙋', callback_data="help"),
-        InlineKeyboardButton('🔐 𝘾𝙇𝙊𝙎𝙀', callback_data="close")
-       ]]
+            if file_type == "video":
+                if allow_video: 
+                    pass
+                else:
+                    continue
+                
+            elif file_type == "audio":
+                if allow_audio:
+                    pass
+                else:
+                    continue
+                
+            elif file_type == "document":
+                if allow_document:
+                    pass
+                else:
+                    continue
+            
+            if len(results) >= max_results:
+                break
+            
+            if pm_file_chat: 
+                unique_id = filter.get("unique_id")
+                if not FIND.get("bot_details"):
+                    try:
+                        bot_= await bot.get_me()
+                        FIND["bot_details"] = bot_except FloodWait as e:
+                        asyncio.sleep(e.x)
+                        bot_= await bot.get_me()
+                        FIND["bot_details"] = bot_
+                
+                bot_ = FIND.get("bot_details")
+                file_link = f"https://t.me/{bot_.username}?start={unique_id}"
+            
+            results.append(
+                [
+                    InlineKeyboardButton(" 𖣘︎ " + file_names, url=file_link),
+                    InlineKeyboardButton(" 📂 " + f_size, url=file_link)
+                ]
+            )
+        
+    else:
+        return # return if no files found for that query
     
-    reply_markup = InlineKeyboardMarkup(buttons)
-    
-    await bot.send_photo(
-        chat_id=update.chat.id,
-        photo=random.choice(PHOTOS),
-        caption=Translation.START_TEXT.format(
-                update.from_user.first_name),
-        reply_markup=reply_markup,
-        parse_mode="html",
-        reply_to_message_id=update.message_id
-    )
 
-@Client.on_message(filters.command(["help"]) & filters.private, group=1)
-async def help(bot, update):
-    buttons = [[
-        InlineKeyboardButton('𝙃𝙊𝙈𝙀 ⚡', callback_data='start'),
-        InlineKeyboardButton('𝘼𝘽𝙊𝙐𝙏 🚩', callback_data='about')
-    ],[
-        InlineKeyboardButton('𝘾𝙇𝙊𝙎𝙀 🔐', callback_data='close')
-    ]]
+    if len(results) == 0: # double check
+        return
     
-    reply_markup = InlineKeyboardMarkup(buttons)
+    else:
     
-    await bot.send_message(
-        chat_id=update.chat.id,
-        text=Translation.HELP_TEXT,
-        reply_markup=reply_markup,
-        parse_mode="html",
-        reply_to_message_id=update.message_id
-    )
+        result = []
+        # seperating total files into chunks to make as seperate pages
+        result += [results[i * max_per_page :(i + 1) * max_per_page ] for i in range((len(results) + max_per_page - 1) // max_per_page )]
+        len_result = len(result)
+        len_results = len(results)
+        results = None # Free Up Memory
+        
+        FIND[query] = {"results": result, "total_len": len_results, "max_pages": max_pages} # TrojanzHex's Idea Of Dicts😅
+
+        # Add next buttin if page count is not equal to 1
+        if len_result != 1:
+            result[0].append(
+                [
+                    InlineKeyboardButton("𝙉𝙀𝙓𝙏 ➪", callback_data=f"navigate(0|next|{query})")
+                ]
+            )
+        
+        # Just A Decaration
+        result[0].append([
+            InlineKeyboardButton(f"🌟 Page 1/{len_result if len_result < max_pages else max_pages} 🌟", callback_data="ignore")
+        ])
+        
+        
+        # if show_invite is True Append invite link buttons
+        if show_invite:
+            
+            ibuttons = []
+            achatId = []
+            await gen_invite_links(configs, group_id, bot, update)
+            
+            for x in achats["chats"] if isinstance(achats, dict) else achats:
+                achatId.append(int(x["chat_id"])) if isinstance(x, dict) else achatId.append(x)
+
+            ACTIVE_CHATS[str(group_id)] = achatId
+            
+            for y in INVITE_LINK.get(str(group_id)):
+                
+                chat_id = int(y["chat_id"])
+                
+                if chat_id not in achatId:
+                    continue
+                
+                chat_name = y["chat_name"]
+                invite_link = y["invite_link"]
+                
+                if ((len(ibuttons)%2) == 0):
+                    ibuttons.append(
+                        [
+                            InlineKeyboardButton(f"🕊️ {chat_name} 🕊️", url=invite_link)
+                        ]
+                    )
+
+                else:
+                    ibuttons[-1].append(
+                        InlineKeyboardButton(f"⚜ {chat_name} ⚜", url=invite_link)
+                    )
+                
+            for x in ibuttons:
+                result[0].insert(0, x) #Insert invite link buttons at first of page
+                
+            ibuttons = None # Free Up Memory...
+            achatId = None
+            
+            
+        reply_markup = InlineKeyboardMarkup(result[0])
+
+        try:
+            await bot.send_photo(
+                chat_id = update.chat.id,
+                photo= "https://telegra.ph/file/260e45cb876f25b1c68ac.jpg",
+                caption=f"<b>🕊️Total File :- {(len_results)} </b>\n<b>❤️‍🔥𝐆𝐫𝐨𝐮𝐩❤️‍🔥:- @ADMOVEIAD പടം ലഭിക്കുന്നതിനായി താഴെ കാണുന്ന ബട്ടണുകളിൽ ക്ലിക്ക് ചെയ്യുക👇👇⭕️𝗣𝗿𝗲𝘀𝘀 𝗧𝗵𝗲 𝗗𝗼𝘄𝗻 𝗕𝘂𝘁𝘁𝗼𝗻𝘀 𝗧𝗼 𝗔𝗰𝗰𝗲𝘀𝘀 𝗧𝗵𝗲 𝗙𝗶𝗹𝗲⭕️ :- {(len_results)} </b>\n<b>♻️𝐑𝐞𝐪𝐮𝐞𝐬𝐭𝐞𝐝 𝐌𝐨𝐯𝐢𝐞♻️ :-</b> <code>{query}</code>",
+                reply_markup=reply_markup,
+                parse_mode="html",
+                reply_to_message_id=update.message_id
+            )
+
+        except ButtonDataInvalid:
+            print(result[0])
+        
+        except Exception as e:
+            print(e)async def gen_invite_links(db, group_id, bot, update):
+    """
+    A Funtion To Generate Invite Links For All Active 
+    Connected Chats In A Group
+    """
+    chats = db.get("chat_ids")
+    global INVITE_LINK
+    
+    if INVITE_LINK.get(str(group_id)):
+        return
+    
+    Links = []
+    if chats:
+        for x in chats:
+            Name = x["chat_name"]
+            
+            if Name == None:
+                continue
+            
+            chatId=int(x["chat_id"])
+            
+            Link = await bot.export_chat_invite_link(chatId)
+            Links.append({"chat_id": chatId, "chat_name": Name, "invite_link": Link})
+
+        INVITE_LINK[str(group_id)] = Links
+    return 
+
+
+async def recacher(group_id, ReCacheInvite=True, ReCacheActive=False, bot=Bot, update=Message):
+    """
+    A Funtion To rechase invite links and active chats of a specific chat
+    """
+    global INVITE_LINK, ACTIVE_CHATS
+
+    if ReCacheInvite:
+        if INVITE_LINK.get(str(group_id)):
+            INVITE_LINK.pop(str(group_id))
+        
+        Links = []
+        chats = await db.find_chat(group_id)
+        chats = chats["chat_ids"]
+        
+        if chats:
+            for x in chats:
+                Name = x["chat_name"]
+                chat_id = x["chat_id"]
+                if (Name == None or chat_id == None):
+                    continue
+                
+                chat_id = int(chat_id)
+                
+                Link = await bot.export_chat_invite_link(chat_id)
+                Links.append({"chat_id": chat_id, "chat_name": Name, "invite_link": Link})
+
+            INVITE_LINK[str(group_id)] = Links
+    
+    if ReCacheActive:
+        
+        if ACTIVE_CHATS.get(str(group_id)):
+            ACTIVE_CHATS.pop(str(group_id))
+        
+        achats = await db.find_active(group_id)
+        achatId = []
+        if achats:
+            for x in achats["chats"]:
+                achatId.append(int(x["chat_id"]))
+            
+            ACTIVE_CHATS[str(group_id)] = achatId
+    return
