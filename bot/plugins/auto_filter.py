@@ -6,40 +6,8 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from pyrogram.errors import ButtonDataInvalid, FloodWait
 
-
-import random
-
-PHOTOS = [
-    "https://telegra.ph/file/00f3ec42ec504538e8562.jpg",
-    "https://telegra.ph/file/c8d504199f35cbef9e7d9.jpg",
-    "https://telegra.ph/file/6cde654fda604d8766bfc.jpg",
-    "https://telegra.ph/file/6cde654fda604d8766bfc.jpg",
-    "https://telegra.ph/file/2ab65224486fff9036d60.jpg",
-    "https://telegra.ph/file/a1e13e0dee2925389d45d.jpg",
-    "https://telegra.ph/file/912e99f6798a3d2b1df23.jpg",
-    "https://telegra.ph/file/4c9b2db0dae674721311a.jpg",
-    "https://telegra.ph/file/c8d504199f35cbef9e7d9.jpg",          
-    "https://telegra.ph/file/ce503a23b17d53e630e8f.jpg",
-    "https://telegra.ph/file/715f3323eff6db3be2c6a.jpg",
-    "https://telegra.ph/file/7060eae48294db4fe794c.jpg",
-    "https://telegra.ph/file/260e45cb876f25b1c68ac.jpg",       
-    "https://telegra.ph/file/99303a13e5327748f6c9e.jpg",
-    "https://telegra.ph/file/68eda27d26ade468d8b63.jpg",
-    "https://telegra.ph/file/ae952c29c5b6f734cb243.jpg",
-    "https://telegra.ph/file/9eb707d924df4f939f404.jpg",
-    "https://telegra.ph/file/52174d04e4e8fb6a60c3e.jpg",
-]   
-   
-    t.database import Database # pylint: disable=import-error
-from bo
-
-
-
-
-
-
-
-t.bot import Bot # pylint: disable=import-error
+from bot.database import Database # pylint: disable=import-error
+from bot.bot import Bot # pylint: disable=import-error
 
 
 FIND = {}
@@ -187,7 +155,7 @@ async def auto_filter(bot, update):
         
         # Just A Decaration
         result[0].append([
-            InlineKeyboardButton(f"🌟 Page 1/{len_result if len_result < max_pages else max_pages} 🌟", callback_data="ignore")
+            InlineKeyboardButton(f"🌀 Page 1/{len_result if len_result < max_pages else max_pages} 🌀", callback_data="ignore")
         ])
         
         
@@ -237,8 +205,8 @@ async def auto_filter(bot, update):
         try:
             await bot.send_photo(
                 chat_id = update.chat.id,
-                photo=random.choice(PHOTOS),
-                caption=f"<b>🕊️Total File :- {(len_results)} </b>\n<b>❤️‍🔥𝐆𝐫𝐨𝐮𝐩❤️‍🔥:- @ADMOVEIAD പടം ലഭിക്കുന്നതിനായി താഴെ കാണുന്ന ബട്ടണുകളിൽ ക്ലിക്ക് ചെയ്യുക👇👇⭕️𝗣𝗿𝗲𝘀𝘀 𝗧𝗵𝗲 𝗗𝗼𝘄𝗻 𝗕𝘂𝘁𝘁𝗼𝗻𝘀 𝗧𝗼 𝗔𝗰𝗰𝗲𝘀𝘀 𝗧𝗵𝗲 𝗙𝗶𝗹𝗲⭕️ :- {(len_results)} </b>\n<b>♻️𝐑𝐞𝐪𝐮𝐞𝐬𝐭𝐞𝐝 𝐌𝐨𝐯𝐢𝐞♻️ :-</b> <code>{query}</code>",
+                photo= "https://telegra.ph/file/7060eae48294db4fe794c.jpg",
+                caption=f"<b>🕊️Total File :- {(len_results)} </b>\n<b><a href="https://t.me/ADMOVEIAD">🌟𝐆𝐫𝐨𝐮𝐩🌟</a>♻️𝐑𝐞𝐪𝐮𝐞𝐬𝐭𝐞𝐝 𝐌𝐨𝐯𝐢𝐞♻️ :-</b> <code>{query}</code>",
                 reply_markup=reply_markup,
                 parse_mode="html",
                 reply_to_message_id=update.message_id
